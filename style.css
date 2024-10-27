@@ -1,13 +1,8 @@
 html,
-<<<<<<< HEAD
 body,
 .main,
 .container {
-=======
-body {
-  background-color: #00b3c0;
-  font-family: Arial, Helvetica, sans-serif;
->>>>>>> parent of 472da9a (NEW HOME)
+  background-color: transparent; /* Asegura que el fondo sea transparente */
 }
 
 h1 {
