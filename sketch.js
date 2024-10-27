@@ -1,97 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nino Padilla</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Sofadi+One&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-    
-    <!-- Enlace a la librería p5.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    
-    <style>
-      body {
-        font-family: 'Sofadi One', cursive;
-        background-color: #e3f2fd; /* Color de fondo claro */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
+let particles = []; // Array para almacenar las partículas
+let microParticles = []; // Array para almacenar las micropartículas
 
-      .main {
-        text-align: center;
-      }
+function setup() {
+  let canvas = createCanvas(1920, 1080);
+  canvas.position(0, 0); // Coloca el canvas en la esquina superior izquierda
+  canvas.style("z-index", "-1"); // Envía el canvas al fondo
 
-      .botonera {
-        display: flex;
-        flex-direction: column;
-        gap: 20px; /* Espaciado entre botones */
-      }
+  // Crear las partículas con posiciones aleatorias
+  for (let i = 0; i < 100; i++) {
+    particles.push(new Particle(random(width), random(height), random(15, 30)));
+  }
+}
 
-      .boton {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
+function draw() {
+  background(30, 30, 40, 25); // Fondo oscuro y translúcido para efectos de estela
 
-      .boton a {
-        display: inline-block;
-        padding: 20px 40px; /* Botones más grandes */
-        background-color: #bbdefb; /* Color de fondo claro */
-        color: #0d47a1; /* Color del texto */
-        text-decoration: none;
-        border-radius: 10px; /* Bordes redondeados más marcados */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        font-size: 20px; /* Tamaño de fuente más grande */
-        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-      }
+  // Actualizar y dibujar micropartículas
+  for (let i = microParticles.length - 1; i >= 0; i--) {
+    let mp = microParticles[i];
+    mp.update();
+    mp.display();
 
-      .boton a:hover {
-        background-color: #90caf9; /* Color de fondo más oscuro */
-        transform: scale(1.1) rotate(3deg); /* Escala y rotación al pasar el cursor */
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-      }
+    // Eliminar micropartículas que se desvanecen
+    if (mp.size < 1) {
+      microParticles.splice(i, 1);
+    }
+  }
 
-      header h1 {
-        margin-bottom: 30px; /* Espaciado debajo del título */
-        font-size: 2.5em; /* Tamaño de fuente del título */
-        color: #0d47a1; /* Color del título */
-      }
-    </style>
-</head>
-<body>
-    <div class="main">
-      <div class="container">
-        <header>
-          <h1>Nino Padilla - P5.js</h1>
-        </header>
-        <div class="botonera">
-          <div class="boton">
-            <a href="https://ninopadilla12.github.io/hola_mundo/">hola_mundo</a>
-          </div>
-          <div class="boton">
-            <a href="https://ninopadilla12.github.io/Condicionales/">Condicionales</a>
-          </div>
-          <div class="boton">
-            <a href="https://ninopadilla12.github.io/computer_vision/">Computer Vision</a>
-          </div>
-          <div class="boton">
-            <a href="https://ninopadilla12.github.io/programaci-n_orientada_a_objetos/">Programación Orientada a Objetos</a>
-          </div>
-          <div class="boton">
-            <a href="https://ninopadilla12.github.io/For_loop/">For Loop</a>
-          </div>
-        </div>
-      </div>
-    </div>
+  // Dibujar y actualizar las partículas principales
+  for (let p of particles) {
+    p.update();
+    p.display();
+  }
+}
 
-    <!-- Enlace a tu script de p5.js -->
-    <script src="sketch.js"></script>
-</body>
-</html>
+// Clase de partícula
+class Particle {
+  constructor(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.speed = random(0.5, 2);
+    this.angle = random(TWO_PI);
+    this.color = color(random(255), random(255), random(255)); // Color aleatorio
+  }
+
+  update() {
+    // Movimiento de la partícula
+    this.x += this.speed * cos(this.angle);
+    this.y += this.speed * sin(this.angle);
+
+    // Cambiar tamaño y color cuando el mouse se mueve
+    if (dist(mouseX, mouseY, this.x, this.y) < 100) {
+      // Si el mouse está cerca
+      this.size = map(dist(mouseX, mouseY, this.x, this.y), 0, 100, 50, 15); // Tamaño más grande
+      this.color = color(random(255), random(255), random(255)); // Color aleatorio
+      this.generateMicroParticles(); // Generar micropartículas
+    } else {
+      this.size = map(
+        dist(mouseX, mouseY, this.x, this.y),
+        0,
+        width / 2,
+        30,
+        15
+      ); // Tamaño normal
+    }
+
+    // Rebote en los bordes
+    if (this.x < 0 || this.x > width) this.angle = PI - this.angle;
+    if (this.y < 0 || this.y > height) this.angle = -this.angle;
+  }
+
+  generateMicroParticles() {
+    for (let i = 0; i < 5; i++) {
+      // Generar micropartículas
+      microParticles.push(new MicroParticle(this.x, this.y));
+    }
+  }
+
+  display() {
+    noStroke();
+    fill(this.color.levels[0], this.color.levels[1], this.color.levels[2], 150); // Color translúcido
+    ellipse(this.x, this.y, this.size);
+  }
+}
+
+// Clase de micropartícula
+class MicroParticle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = random(5, 10);
+    this.speed = random(1, 3);
+    this.angle = random(TWO_PI);
+    this.color = color(random(255), random(255), random(255)); // Color aleatorio
+  }
+
+  update() {
+    // Movimiento de la micropartícula
+    this.x += this.speed * cos(this.angle);
+    this.y += this.speed * sin(this.angle);
+
+    // Disminuir el tamaño para simular desvanecimiento
+    this.size -= 0.1;
+  }
+
+  display() {
+    noStroke();
+    fill(this.color.levels[0], this.color.levels[1], this.color.levels[2], 150); // Color translúcido
+    ellipse(this.x, this.y, this.size);
+  }
+}
+
+// Redimensionar el canvas si se cambia el tamaño de la ventana
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
