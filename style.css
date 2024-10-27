@@ -2,7 +2,6 @@ html,
 body,
 .main,
 .container {
-  background-color: transparent; /* Asegura que el fondo sea transparente */
 }
 
 h1 {
