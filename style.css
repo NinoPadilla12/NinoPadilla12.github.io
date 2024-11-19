@@ -9,7 +9,7 @@ h1 {
   color: bisque;
   font-family: "Sofadi One", system-ui;
   font-weight: 400;
-  font-style: normal;
+  font-style: nomal;
   font-size: 4rem;
 }
 
@@ -21,18 +21,18 @@ h1 {
 }
 
 .container {
-  padding: 2rem;
+  padding: 1rem;
 }
 
 a {
-  color: black;
+  color: rgb(255, 255, 255);
   text-decoration: none;
-  background-color: darksalmon;
+  background-color: rgb(19, 48, 73);
   display: block;
   padding: 1rem;
   text-align: center;
-  font-size: 2rem;
-  border: 5px solid rgb(255, 0, 255);
+  font-size: 1rem;
+  border: 2px solid rgb(43, 255, 0);
   border-radius: 10px;
 }
 
